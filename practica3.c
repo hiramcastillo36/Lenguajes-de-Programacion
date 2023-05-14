@@ -131,7 +131,7 @@ void buscar_alumno_y_eliminar(){
     
     int generacion, 
         semestre, 
-        encontrado = 0, 
+        eliminado = 0, 
         nueva_generacion, 
         nuevo_semestre;
     
@@ -153,17 +153,13 @@ void buscar_alumno_y_eliminar(){
                 fwrite(&semestre, sizeof(int), 1, archivo_escritura);
                 fwrite(&generacion, sizeof(int), 1, archivo_escritura);
                 fwrite(carrera, sizeof(strlen(carrera)), 1, archivo_escritura);
+                eliminado++;
             }
             fread(nombre_actual, sizeof(strlen(nombre_actual)), 1, archivo_lectura);
             fread(&calificacion, sizeof(float), 1, archivo_lectura);
             fread(&semestre, sizeof(int), 1, archivo_lectura);
             fread(&generacion, sizeof(int), 1, archivo_lectura);
             fread(carrera, sizeof(strlen(carrera)), 1, archivo_lectura);
-        }
-        if (encontrado) {
-            printf("El alumno ha sido eliminado correctamente.\n");
-        } else {
-            printf("No se encontro ningún alumno con ese nombre.\n");
         }
     } else if(num_alumnos>1){
         printf("Dame informacion extra.\n");
@@ -184,6 +180,7 @@ void buscar_alumno_y_eliminar(){
                 fwrite(&semestre, sizeof(int), 1, archivo_escritura);
                 fwrite(&generacion, sizeof(int), 1, archivo_escritura);
                 fwrite(carrera, sizeof(strlen(carrera)), 1, archivo_escritura);
+                eliminado++;
             }
             fread(nombre_actual, sizeof(strlen(nombre_actual)), 1, archivo_lectura);
             fread(&calificacion, sizeof(float), 1, archivo_lectura);
@@ -191,20 +188,21 @@ void buscar_alumno_y_eliminar(){
             fread(&generacion, sizeof(int), 1, archivo_lectura);
             fread(carrera, sizeof(strlen(carrera)), 1, archivo_lectura);
         }
-    } else {
+    } else {    
+        printf("No se encontro ningún alumno con ese nombre.\n");
         fclose(archivo_lectura);
         fclose(archivo_escritura);
         remove("temp.bin");
         return;
     } 
+    if(eliminado)
+        printf("El alumno ha sido eliminado correctamente.\n");
     fclose(archivo_lectura);
     fclose(archivo_escritura);
     remove("practica2.bin");
     rename("temp.bin", "practica2.bin");
     
 }
-
-
 
 void modificar(){
     char nombre[50];
