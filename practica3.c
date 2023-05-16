@@ -12,33 +12,78 @@ enum operaciones {
 };
 
 void add_student(){
-    FILE *file;
-    file = fopen("practica2.bin", "rb+");
-    if(file == NULL){
-        file = fopen("practica2.bin", "wb+");
-    } else 
-        fseek(file, 0, SEEK_END);
-    char nombre[50];
-    float calificacion;
-    int semestre;
-    int generacion;
-    char carrera[50];
+    FILE *archivo_lectura;
+    archivo_lectura = fopen("practica2.bin", "rb");
+    FILE *archivo_escritura = fopen("temp.bin", "wb");
+    char nombre_n[50];
+    float calificacion_n;
+    int semestre_n;
+    int generacion_n;
+    char carrera_n[50];
     printf("Dime el nombre: ");
-    scanf("%s", nombre);
+    scanf("%s", nombre_n);
     printf("Dime la calificacion: ");
-    scanf("%f", &calificacion);
+    scanf("%f", &calificacion_n);
     printf("Dime el semestre: ");
-    scanf("%d", &semestre);
+    scanf("%d", &semestre_n);
     printf("Dime la generacion: ");
-    scanf("%d", &generacion);
+    scanf("%d", &generacion_n);
     printf("Dime la carrera: ");
-    scanf("%s", carrera);
-    fwrite(nombre, sizeof(strlen(nombre)), 1, file);
-    fwrite(&calificacion, sizeof(float), 1, file);
-    fwrite(&semestre, sizeof(int), 1, file);
-    fwrite(&generacion, sizeof(int), 1, file);
-    fwrite(carrera, sizeof(strlen(carrera)), 1, file);
-    fclose(file);
+    scanf("%s", carrera_n);
+    int bandera=0;
+    char nombre_actual[50], carrera[50];
+    int generacion, 
+        semestre, 
+        encontrado = 0, 
+        nueva_generacion, 
+        nuevo_semestre;
+    
+    float calificacion;
+    
+    float nueva_calificacion=0;
+
+    fread(nombre_actual, sizeof(strlen(nombre_actual)), 1, archivo_lectura);
+    fread(&calificacion, sizeof(float), 1, archivo_lectura);
+    fread(&semestre, sizeof(int), 1, archivo_lectura);
+    fread(&generacion, sizeof(int), 1, archivo_lectura);
+    fread(carrera, sizeof(strlen(carrera)), 1, archivo_lectura);
+    while (!feof(archivo_lectura)) {
+        if (strcmp(nombre_actual, nombre_n) > 0 && bandera==0) {
+            fwrite(nombre_n, sizeof(strlen(nombre_n)), 1, archivo_escritura);
+            fwrite(&calificacion_n, sizeof(float), 1, archivo_escritura);
+            fwrite(&semestre_n, sizeof(int), 1, archivo_escritura);
+            fwrite(&generacion_n, sizeof(int), 1, archivo_escritura);
+            fwrite(carrera_n, sizeof(strlen(carrera)), 1, archivo_escritura);
+            fwrite(nombre_actual, sizeof(strlen(nombre_actual)), 1, archivo_escritura);
+            fwrite(&calificacion, sizeof(float), 1, archivo_escritura);
+            fwrite(&semestre, sizeof(int), 1, archivo_escritura);
+            fwrite(&generacion, sizeof(int), 1, archivo_escritura);
+            fwrite(carrera, sizeof(strlen(carrera)), 1, archivo_escritura);
+            bandera=1;
+        } else {
+            fwrite(nombre_actual, sizeof(strlen(nombre_actual)), 1, archivo_escritura);
+            fwrite(&calificacion, sizeof(float), 1, archivo_escritura);
+            fwrite(&semestre, sizeof(int), 1, archivo_escritura);
+            fwrite(&generacion, sizeof(int), 1, archivo_escritura);
+            fwrite(carrera, sizeof(strlen(carrera)), 1, archivo_escritura);
+        }
+        fread(nombre_actual, sizeof(strlen(nombre_actual)), 1, archivo_lectura);
+        fread(&calificacion, sizeof(float), 1, archivo_lectura);
+        fread(&semestre, sizeof(int), 1, archivo_lectura);
+        fread(&generacion, sizeof(int), 1, archivo_lectura);
+        fread(carrera, sizeof(strlen(carrera)), 1, archivo_lectura);
+    }
+    if(bandera==0){
+        fwrite(nombre_n, sizeof(strlen(nombre_n)), 1, archivo_escritura);
+            fwrite(&calificacion_n, sizeof(float), 1, archivo_escritura);
+            fwrite(&semestre_n, sizeof(int), 1, archivo_escritura);
+            fwrite(&generacion_n, sizeof(int), 1, archivo_escritura);
+            fwrite(carrera_n, sizeof(strlen(carrera_n)), 1, archivo_escritura);
+    }
+    fclose(archivo_lectura);
+    fclose(archivo_escritura);
+    remove("practica2.bin");
+    rename("temp.bin", "practica2.bin");
 }
 
 void header(){
@@ -362,7 +407,8 @@ void menu(){
         printf("3. Eliminar elemento por categoria: \n");
         printf("4. Mostrar elemento por categoria: \n");
         printf("5. Actualizar elemento por categoria: \n");
-        printf("6. Salir\n");
+        printf("6. Imprimir ordenados \n");
+        printf("7. Salir\n");
         printf("Ingrese una opcion: ");
         scanf("%d", &opcion);
         switch (opcion) {
@@ -382,6 +428,9 @@ void menu(){
                 modificar();
             break;
             case 6:
+                sort();
+            break;
+            case 7:
                 exit(EXIT_SUCCESS); // Sale del programa
             default:
                 printf("Opcion invalida\n");
@@ -392,7 +441,7 @@ void menu(){
 // Add random students
 
 void add_student_db(){
-    char nombres[5][50] = {"Juan", "Mariana", "Palmira", "Loredo", "Pedrito"};
+    char nombres[4][50] = {"Ana"};
     char carrras[5][50] = {"ISI", "IC", "IEE", "IEA", "IM"};
     FILE *file;
     file = fopen("practica2.bin", "rb+");
@@ -406,7 +455,7 @@ void add_student_db(){
     int generacion;
     char carrera[50];
     printf("%d", rand() % 5 );
-    strcpy(nombre, nombres[rand() % 5 ]);
+    strcpy(nombre, nombres[0]);
     strcpy(carrera, carrras[rand() % 5 ]);
     semestre = rand() % 13 ;
     generacion = rand() % 2020 ;

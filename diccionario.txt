@@ -1,0 +1,6 @@
+Bienvenido al diccionario de datos para estudiantes de la UASLP
+Nombre CHAR Nombre del estudiante
+Calificacion FLOAT Calificacion promedio del estudiante
+Semestre INT Semestre actual del estudiante
+Generacion INT Generacion de ingreso del estudiante
+Carrera CHAR Carrera que cursa actualmente el estudiante
