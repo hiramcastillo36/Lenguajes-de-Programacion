@@ -87,11 +87,38 @@ void add_student(){
 }
 
 void header(){
+    FILE *file;
+    file = fopen("diccionario.txt", "r");
+    char text[100], aux[100];
+    fgets(text, sizeof(text), file);
+    for(int i=0; i<128; i++)
+        printf("-");
+    printf("\n");
+    while(!feof(file)){
+        fgets(text, sizeof(text), file);
+        char *ptr; // declare a ptr pointer  
+        ptr = strtok(text, " "); // use strtok() function to separate string using comma (,) delimiter.  
+        //cout << " \n Split string using strtok() function: " << endl;  
+        // use while loop to check ptr is not null  
+        printf("|");
+        for(int i=0; i<8; i++)
+            printf(" ");
+        printf("%s", ptr);
+        for(int i=0; i<8; i++)
+            printf(" ");
+        
+        strtok (NULL, " ");
+        strtok (NULL, " ");
+        strtok (NULL, " ");
+    }
+    printf("|\n");
+    for(int i=0; i<128; i++)
+        printf("-");/*
     for(int i=0; i<125; i++)
         printf("-");
     printf("\n|                 Nombre                 |    Calificacion   |       Carrera      |      Semestre      |     Generacion     |\n");
     for(int i=0; i<125; i++)
-        printf("-");
+        printf("-");*/
     printf("\n");    
 }
 
@@ -102,8 +129,8 @@ void print_student(
                     int generacion,
                     char carrera[50]
                 ){
-    printf("|%-40s|%-19.2f|%-20s|%-20d|%-20d|\n", nombre, calificacion, carrera, semestre, generacion);
-    for(int i=0; i<125; i++)
+    printf("|%-22s|%-28.2f|%-23s|%-24d|%-26d|\n", nombre, calificacion, carrera, semestre, generacion);
+    for(int i=0; i<128; i++)
         if(i%2)printf("-");
         else printf(" ");
     printf("\n");
@@ -150,12 +177,12 @@ int numero_de_alumnos(char nombre[]){
     fread(&semestre, sizeof(int), 1, file);
     fread(&generacion, sizeof(int), 1, file);
     fread(carrera, sizeof(strlen(carrera)), 1, file);
-    //printf("%s %s", nombre, nombre_actual);
+    
     while (!feof(file)){
         if (strcmp(nombre_actual, nombre) == 0) {
             counter++;
         }
-        //printf("\n%s %s", nombre, nombre_actual);
+        
         fread(nombre_actual, sizeof(strlen(nombre_actual)), 1, file);
         fread(&calificacion, sizeof(float), 1, file);
         fread(&semestre, sizeof(int), 1, file);
@@ -428,7 +455,7 @@ void menu(){
                 modificar();
             break;
             case 6:
-                sort();
+                prints_list();
             break;
             case 7:
                 exit(EXIT_SUCCESS); // Sale del programa
@@ -468,7 +495,24 @@ void add_student_db(){
     fclose(file);
 }
 
+void data_description(){
+    FILE *file;
+    file = fopen("diccionario.txt", "r");
+    char text[200];
+    fgets(text, 200, file);
+    printf("%s", text);
+}
+
+void description(){
+    FILE *file;
+    file = fopen("diccionario.txt", "r");
+    char text[200];
+    fgets(text, 200, file);
+    printf("%s", text);
+}
+
 int main(){
+    description();
     menu();
     // Create file
     //for(int i=0; i<30; i++)
