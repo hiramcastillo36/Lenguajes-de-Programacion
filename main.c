@@ -11,6 +11,14 @@ enum operaciones {
     carrera
 };
 
+void write_file(FILE *file, char name[50], float grade, int semestre, int gen, char career[50]){
+    fwrite(name, sizeof(strlen(name)), 1, file);
+    fwrite(&grade, sizeof(float), 1, file);
+    fwrite(&semestre, sizeof(int), 1, file);
+    fwrite(&gen, sizeof(int), 1, file);
+    fwrite(career, sizeof(strlen(career)), 1, file);
+}
+
 void add_student(){
     FILE *archivo_lectura;
     archivo_lectura = fopen("practica2.bin", "rb");
@@ -49,23 +57,11 @@ void add_student(){
     fread(carrera, sizeof(strlen(carrera)), 1, archivo_lectura);
     while (!feof(archivo_lectura)) {
         if (strcmp(nombre_actual, nombre_n) > 0 && bandera==0) {
-            fwrite(nombre_n, sizeof(strlen(nombre_n)), 1, archivo_escritura);
-            fwrite(&calificacion_n, sizeof(float), 1, archivo_escritura);
-            fwrite(&semestre_n, sizeof(int), 1, archivo_escritura);
-            fwrite(&generacion_n, sizeof(int), 1, archivo_escritura);
-            fwrite(carrera_n, sizeof(strlen(carrera)), 1, archivo_escritura);
-            fwrite(nombre_actual, sizeof(strlen(nombre_actual)), 1, archivo_escritura);
-            fwrite(&calificacion, sizeof(float), 1, archivo_escritura);
-            fwrite(&semestre, sizeof(int), 1, archivo_escritura);
-            fwrite(&generacion, sizeof(int), 1, archivo_escritura);
-            fwrite(carrera, sizeof(strlen(carrera)), 1, archivo_escritura);
+            write_file(archivo_escritura, nombre_n, calificacion_n, semestre_n, generacion_n, carrera_n);
+            write_file(archivo_escritura, nombre_actual, calificacion, semestre, generacion, carrera);
             bandera=1;
         } else {
-            fwrite(nombre_actual, sizeof(strlen(nombre_actual)), 1, archivo_escritura);
-            fwrite(&calificacion, sizeof(float), 1, archivo_escritura);
-            fwrite(&semestre, sizeof(int), 1, archivo_escritura);
-            fwrite(&generacion, sizeof(int), 1, archivo_escritura);
-            fwrite(carrera, sizeof(strlen(carrera)), 1, archivo_escritura);
+            write_file(archivo_escritura, nombre_actual, calificacion, semestre, generacion, carrera);
         }
         fread(nombre_actual, sizeof(strlen(nombre_actual)), 1, archivo_lectura);
         fread(&calificacion, sizeof(float), 1, archivo_lectura);
@@ -74,11 +70,7 @@ void add_student(){
         fread(carrera, sizeof(strlen(carrera)), 1, archivo_lectura);
     }
     if(bandera==0){
-        fwrite(nombre_n, sizeof(strlen(nombre_n)), 1, archivo_escritura);
-            fwrite(&calificacion_n, sizeof(float), 1, archivo_escritura);
-            fwrite(&semestre_n, sizeof(int), 1, archivo_escritura);
-            fwrite(&generacion_n, sizeof(int), 1, archivo_escritura);
-            fwrite(carrera_n, sizeof(strlen(carrera_n)), 1, archivo_escritura);
+        write_file(archivo_escritura, nombre_n, calificacion_n, semestre_n, generacion_n, carrera_n);
     }
     fclose(archivo_lectura);
     fclose(archivo_escritura);
@@ -96,29 +88,21 @@ void header(){
     printf("\n");
     while(!feof(file)){
         fgets(text, sizeof(text), file);
-        char *ptr; // declare a ptr pointer  
-        ptr = strtok(text, " "); // use strtok() function to separate string using comma (,) delimiter.  
-        //cout << " \n Split string using strtok() function: " << endl;  
-        // use while loop to check ptr is not null  
+        char *ptr; 
+        ptr = strtok(text, " ");  
         printf("|");
         for(int i=0; i<8; i++)
             printf(" ");
         printf("%s", ptr);
         for(int i=0; i<8; i++)
             printf(" ");
-        
         strtok (NULL, " ");
         strtok (NULL, " ");
         strtok (NULL, " ");
     }
     printf("|\n");
     for(int i=0; i<128; i++)
-        printf("-");/*
-    for(int i=0; i<125; i++)
         printf("-");
-    printf("\n|                 Nombre                 |    Calificacion   |       Carrera      |      Semestre      |     Generacion     |\n");
-    for(int i=0; i<125; i++)
-        printf("-");*/
     printf("\n");    
 }
 
@@ -220,11 +204,7 @@ void buscar_alumno_y_eliminar(){
         fread(carrera, sizeof(strlen(carrera)), 1, archivo_lectura);
         while (!feof(archivo_lectura)) {
             if (!(strcmp(nombre_actual, nombre) == 0)) {
-                fwrite(nombre_actual, sizeof(strlen(nombre_actual)), 1, archivo_escritura);
-                fwrite(&calificacion, sizeof(float), 1, archivo_escritura);
-                fwrite(&semestre, sizeof(int), 1, archivo_escritura);
-                fwrite(&generacion, sizeof(int), 1, archivo_escritura);
-                fwrite(carrera, sizeof(strlen(carrera)), 1, archivo_escritura);
+                write_file(archivo_escritura, nombre_actual, calificacion, semestre, generacion, carrera);
                 eliminado++;
             }
             fread(nombre_actual, sizeof(strlen(nombre_actual)), 1, archivo_lectura);
@@ -247,11 +227,7 @@ void buscar_alumno_y_eliminar(){
         while (!feof(archivo_lectura)) {
             if (!(strcmp(nombre_actual, nombre) == 0 && nueva_generacion == generacion 
                 && nuevo_semestre == semestre ) ) {
-                fwrite(nombre_actual, sizeof(strlen(nombre_actual)), 1, archivo_escritura);
-                fwrite(&calificacion, sizeof(float), 1, archivo_escritura);
-                fwrite(&semestre, sizeof(int), 1, archivo_escritura);
-                fwrite(&generacion, sizeof(int), 1, archivo_escritura);
-                fwrite(carrera, sizeof(strlen(carrera)), 1, archivo_escritura);
+                write_file(archivo_escritura, nombre_actual, calificacion, semestre, generacion, carrera);
                 eliminado++;
             }
             fread(nombre_actual, sizeof(strlen(nombre_actual)), 1, archivo_lectura);
@@ -309,17 +285,9 @@ void modificar(){
         fread(carrera, sizeof(strlen(carrera)), 1, archivo_lectura);
         while (!feof(archivo_lectura)) {
             if (strcmp(nombre_actual, nombre) == 0) {
-                fwrite(nombre_actual, sizeof(strlen(nombre_actual)), 1, archivo_escritura);
-                fwrite(&nueva_calificacion, sizeof(float), 1, archivo_escritura);
-                fwrite(&semestre, sizeof(int), 1, archivo_escritura);
-                fwrite(&generacion, sizeof(int), 1, archivo_escritura);
-                fwrite(carrera, sizeof(strlen(carrera)), 1, archivo_escritura);
+                write_file(archivo_escritura, nombre_actual, nueva_calificacion, semestre, generacion, carrera);
             } else {
-                fwrite(nombre_actual, sizeof(strlen(nombre_actual)), 1, archivo_escritura);
-                fwrite(&calificacion, sizeof(float), 1, archivo_escritura);
-                fwrite(&semestre, sizeof(int), 1, archivo_escritura);
-                fwrite(&generacion, sizeof(int), 1, archivo_escritura);
-                fwrite(carrera, sizeof(strlen(carrera)), 1, archivo_escritura);
+                write_file(archivo_escritura, nombre_actual, calificacion, semestre, generacion, carrera);
             }
             fread(nombre_actual, sizeof(strlen(nombre_actual)), 1, archivo_lectura);
             fread(&calificacion, sizeof(float), 1, archivo_lectura);
@@ -349,17 +317,9 @@ void modificar(){
         while (!feof(archivo_lectura)) {
             if (strcmp(nombre_actual, nombre) == 0 && nueva_generacion == generacion 
                 && nuevo_semestre == semestre  ) {
-                fwrite(nombre_actual, sizeof(strlen(nombre_actual)), 1, archivo_escritura);
-                fwrite(&nueva_calificacion, sizeof(float), 1, archivo_escritura);
-                fwrite(&semestre, sizeof(int), 1, archivo_escritura);
-                fwrite(&generacion, sizeof(int), 1, archivo_escritura);
-                fwrite(carrera, sizeof(strlen(carrera)), 1, archivo_escritura);
+                write_file(archivo_escritura, nombre_actual, nueva_calificacion, semestre, generacion, carrera);
             } else {
-                fwrite(nombre_actual, sizeof(strlen(nombre_actual)), 1, archivo_escritura);
-                fwrite(&calificacion, sizeof(float), 1, archivo_escritura);
-                fwrite(&semestre, sizeof(int), 1, archivo_escritura);
-                fwrite(&generacion, sizeof(int), 1, archivo_escritura);
-                fwrite(carrera, sizeof(strlen(carrera)), 1, archivo_escritura);
+                write_file(archivo_escritura, nombre_actual, calificacion, semestre, generacion, carrera);
             }
             fread(nombre_actual, sizeof(strlen(nombre_actual)), 1, archivo_lectura);
             fread(&calificacion, sizeof(float), 1, archivo_lectura);
