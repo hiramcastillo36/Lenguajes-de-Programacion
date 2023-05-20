@@ -1,0 +1,9 @@
+Hola, esto es un archivo para la practica
+de lenguajes de programaciocn, saludos a todos
+que tal como estan.
+
+Nombre
+Calificacion
+Carrera
+Semestre
+Generacion
