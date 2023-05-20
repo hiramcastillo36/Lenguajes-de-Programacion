@@ -11,6 +11,39 @@ enum operaciones {
     carrera
 };
 
+void write_file(FILE *file, char name[50], 
+                float grade, int semester, 
+                int gen, char career[50]);
+void read_file(FILE *file, char name[50], 
+                float *grade, int *semester, 
+                int *gen, char career[50]);
+void add_student();
+void header();
+void print_student(
+                    char nombre[50], float calificacion,
+                    int semestre, int generacion,
+                    char carrera[50]
+                );
+
+void prints_list();
+void buscar_alumno_y_eliminar();
+void modificar();
+void buscar_alumno_y_mostrar();
+void menu();
+void add_student_db();
+void data_description();
+void description();
+int menu_opciones();
+int numero_de_alumnos(char nombre[]);
+
+int main(){
+    description();
+    menu();
+    // Create file
+    //for(int i=0; i<30; i++)
+    //    add_student_db();
+}
+
 void write_file(FILE *file, char name[50], float grade, int semester, int gen, char career[50]){
     fwrite(name, sizeof(strlen(name)), 1, file);
     fwrite(&grade, sizeof(float), 1, file);
@@ -142,6 +175,7 @@ void prints_list(){
     }
     fclose(file);
 }
+
 int numero_de_alumnos(char nombre[]){
     int counter=0;
     FILE *file = fopen("practica2.bin", "rb");
@@ -417,12 +451,4 @@ void description(){
     char text[200];
     fgets(text, 200, file);
     printf("%s", text);
-}
-
-int main(){
-    description();
-    menu();
-    // Create file
-    //for(int i=0; i<30; i++)
-    //    add_student_db();
 }
