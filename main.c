@@ -36,6 +36,10 @@ void description();
 int menu_opciones();
 int numero_de_alumnos(char nombre[]);
 
+void sort(){
+    
+}
+
 int main(){
     description();
     menu();
@@ -410,31 +414,53 @@ void menu(){
 // Add random students
 
 void add_student_db(){
-    char nombres[4][50] = {"Ana"};
-    char carrras[5][50] = {"ISI", "IC", "IEE", "IEA", "IM"};
-    FILE *file;
-    file = fopen("practica2.bin", "rb+");
-    if(file == NULL){
-        file = fopen("practica2.bin", "wb+");
-    } else 
-        fseek(file, 0, SEEK_END);
-    char nombre[50];
+    char nombres[][50] = {"Ana", "Patricio", "Erick", "Mariana", "Maria", "Juan", "Pedro"};
+    char carrras[][50] = {"ISI", "IC", "IEE", "IEA", "IM", "IA", "IQ"};
+    
+    FILE *archivo_lectura;
+    archivo_lectura = fopen("practica2.bin", "rb");
+    FILE *archivo_escritura = fopen("temp.bin", "wb");
+    char nombre_n[50];
+    float calificacion_n;
+    int semestre_n;
+    int generacion_n;
+    char carrera_n[50];
+    
+    int bandera=0;
+    char nombre_actual[50], carrera[50];
+    int generacion, 
+        semestre, 
+        encontrado = 0, 
+        nueva_generacion, 
+        nuevo_semestre;
+    
     float calificacion;
-    int semestre;
-    int generacion;
-    char carrera[50];
-    printf("%d", rand() % 5 );
-    strcpy(nombre, nombres[0]);
-    strcpy(carrera, carrras[rand() % 5 ]);
-    semestre = rand() % 13 ;
-    generacion = rand() % 2020 ;
-    calificacion = rand() % 101;
-    fwrite(nombre, sizeof(strlen(nombre)), 1, file);
-    fwrite(&calificacion, sizeof(float), 1, file);
-    fwrite(&semestre, sizeof(int), 1, file);
-    fwrite(&generacion, sizeof(int), 1, file);
-    fwrite(carrera, sizeof(strlen(carrera)), 1, file);
-    fclose(file);
+    
+    float nueva_calificacion=0;
+    strcpy(nombre_n, nombres[rand() % 6]);
+    strcpy(carrera_n, carrras[rand() % 6 ]);
+    semestre_n = rand() % 13 ;
+    generacion_n = rand() % 2020 ;
+    calificacion_n = rand() % 100;
+    read_file(archivo_lectura, nombre_actual, &calificacion, &semestre, &generacion, carrera);
+    
+    while (!feof(archivo_lectura)) {
+        if (strcmp(nombre_actual, nombre_n) > 0 && bandera==0) {
+            write_file(archivo_escritura, nombre_n, calificacion_n, semestre_n, generacion_n, carrera_n);
+            write_file(archivo_escritura, nombre_actual, calificacion, semestre, generacion, carrera);
+            bandera=1;
+        } else {
+            write_file(archivo_escritura, nombre_actual, calificacion, semestre, generacion, carrera);
+        }
+        read_file(archivo_lectura, nombre_actual, &calificacion, &semestre, &generacion, carrera);
+    }
+    if(bandera==0){
+        write_file(archivo_escritura, nombre_n, calificacion_n, semestre_n, generacion_n, carrera_n);
+    }
+    fclose(archivo_lectura);
+    fclose(archivo_escritura);
+    remove("practica2.bin");
+    rename("temp.bin", "practica2.bin");
 }
 
 void data_description(){
